@@ -125,7 +125,11 @@ EOF
 
 service sshd reload
 
-cd /usr/local/lib/php/phabricator && ./bin/storage upgrade --user $USER --password $PASS
+cd /usr/local/lib/php/phabricator && ./bin/config set mysql.host "localhost"
+cd /usr/local/lib/php/phabricator && ./bin/config set mysql.user "$USER"
+cd /usr/local/lib/php/phabricator && ./bin/config set mysql.pass "$PASS"
+
+cd /usr/local/lib/php/phabricator && ./bin/storage upgrade 
 
 #restart the services to make sure we have pick up the new permission
 service php-fpm restart 2>/dev/null
