@@ -125,11 +125,11 @@ cd /usr/local/lib/php/phabricator && ./bin/config set mysql.host "localhost"
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.user "$USER"
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.pass "$PASS"
 cd /usr/local/lib/php/phabricator && ./bin/config set phabricator.base-uri "http://phabricator.shenrs.eu"
-cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-host "mail.shenrs.eu"
-cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-user "rshen@shenrs.eu"
-cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-password "aaa123"
+# cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-host "mail.shenrs.eu"
+# cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-user "rshen@shenrs.eu"
+# cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-password "aaa123"
 
-cd /usr/local/lib/php/phabricator && ./bin/storage upgrade 
+cd /usr/local/lib/php/phabricator && ./bin/storage upgrade --force 
 
 #restart the services to make sure we have pick up the new permission
 service php-fpm restart 2>/dev/null
@@ -143,5 +143,5 @@ echo "Database Name: $DB" > /root/PLUGIN_INFO
 echo "Database User: $USER" >> /root/PLUGIN_INFO
 echo "Database Password: $PASS" >> /root/PLUGIN_INFO
 
-echo "Phabricator Admin User: $NCUSER" >> /root/PLUGIN_INFO
-echo "Phabricator Admin Password: $NCPASS" >> /root/PLUGIN_INFO
+# echo "Phabricator Admin User: $NCUSER" >> /root/PLUGIN_INFO
+# echo "Phabricator Admin Password: $NCPASS" >> /root/PLUGIN_INFO
