@@ -4,6 +4,7 @@
 sysrc -f /etc/rc.conf nginx_enable="YES"
 sysrc -f /etc/rc.conf mysql_enable="YES"
 sysrc -f /etc/rc.conf php_fpm_enable="YES"
+sysrc -f /etc/rc.conf phd_enable="YES"
 
 # Install fresh phabricator.conf if user hasn't upgraded
 CPCONFIG=0
@@ -100,37 +101,39 @@ if [ -e "/etc/iocage-env" ] ; then
 	echo "Using NAT Address: $IOCAGE_PLUGIN_IP"
 fi
 
-# FIXME:
-# We need to fix following
-# #Use occ to complete Phabricator installation
-# su -m www -c "php /usr/local/www/phabricator/occ maintenance:install --database=\"mysql\" --database-name=\"phabricator\" --database-user=\"$USER\" --database-pass=\"$PASS\" --database-host=\"localhost\" --admin-user=\"$NCUSER\" --admin-pass=\"$NCPASS\" --data-dir=\"/usr/local/www/phabricator/data\"" 
-# su -m www -c "php /usr/local/www/phabricator/occ config:system:set trusted_domains 1 --value=\"${IOCAGE_PLUGIN_IP}\""
+cp /usr/local/lib/php/phabricator/resources/sshd/phabricator-sudoers.sample /usr/local/etc/sudoer.d
+cp /usr/local/lib/php/phabricator/conf/local/local.json.sample /usr/local/lib/php/phabricator/conf/local/local.json
 
-# #workaround for occ (in shell just use occ instead of su -m www -c "....")
-# echo >> .cshrc
-# echo alias occ ./occ.sh >> .cshrc
-# echo 'su -m www -c php\ ``/usr/local/www/phabricator/occ\ "$*"``' > ~/occ.sh
-# chmod u+x ~/occ.sh
 
-# #workaround for app-pkg
-# sed -i '' "s|false|true|g" /usr/local/www/phabricator/config/config.php
+cat /etc/ssh/sshd_config <<EOF
+Match User git
+ AllowUsers git
+ AuthorizedKeysCommand /usr/local/lib/php/phabricator/resources/sshd/phabricator-ssh-hook.sh
+ AuthorizedKeysCommandUser git
+ AuthorizedKeysFile none
+ AuthenticationMethods publickey
+ PermitRootLogin no
+ PasswordAuthentication no
+ PermitTTY no
+ AllowAgentForwarding no
+ AllowTcpForwarding no
+ GatewayPorts no
+ PermitOpen none
+ PermitTunnel no
+ X11Forwarding no
+EOF
 
-# # create sessions tmp dir outside phabricator installation
-# mkdir -p /usr/local/www/phabricator-sessions-tmp >/dev/null 2>/dev/null
-# chmod o-rwx /usr/local/www/phabricator-sessions-tmp
-# chown -R www:www /usr/local/www/phabricator-sessions-tmp
-# chown -R www:www /usr/local/www/phabricator/app-pkgs
+service sshd reload
 
-# chmod -R o-rwx /usr/local/www/phabricator
-
-# #updater needs this
-# chown -R www:www /usr/local/www/phabricator
+cd /usr/local/lib/php/phabricator && ./bin/storage upgrade --user $USER --password $PASS
 
 #restart the services to make sure we have pick up the new permission
 service php-fpm restart 2>/dev/null
 #nginx restarts to fast while php is not fully started yet
 sleep 5
 service nginx restart 2>/dev/null
+
+service phd start 2>/dev/null
 
 echo "Database Name: $DB" > /root/PLUGIN_INFO
 echo "Database User: $USER" >> /root/PLUGIN_INFO
