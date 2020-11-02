@@ -53,12 +53,9 @@ NCUSER="ncadmin"
 # Save the config values
 echo "$DB" > /root/dbname
 echo "$USER" > /root/dbuser
-echo "$NCUSER" > /root/ncuser
 export LC_ALL=C
 cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 > /root/dbpassword
-cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1 > /root/ncpassword
 PASS=`cat /root/dbpassword`
-NCPASS=`cat /root/ncpassword`
 
 if [ -e "/root/.mysql_secret" ] ; then
    # Mysql > 57 sets a default PW on root
@@ -101,11 +98,10 @@ if [ -e "/etc/iocage-env" ] ; then
 	echo "Using NAT Address: $IOCAGE_PLUGIN_IP"
 fi
 
-cp /usr/local/lib/php/phabricator/resources/sshd/phabricator-sudoers.sample /usr/local/etc/sudoer.d
+cp /usr/local/lib/php/phabricator/resources/sshd/phabricator-sudoers.sample /usr/local/etc/sudoers.d
 cp /usr/local/lib/php/phabricator/conf/local/local.json.sample /usr/local/lib/php/phabricator/conf/local/local.json
 
-
-cat /etc/ssh/sshd_config <<EOF
+cat >>/etc/ssh/sshd_config <<EOF
 Match User git
  AllowUsers git
  AuthorizedKeysCommand /usr/local/lib/php/phabricator/resources/sshd/phabricator-ssh-hook.sh
@@ -128,6 +124,10 @@ service sshd reload
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.host "localhost"
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.user "$USER"
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.pass "$PASS"
+cd /usr/local/lib/php/phabricator && ./bin/config set phabricator.base-uri "http://phabricator.shenrs.eu"
+cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-host "mail.shenrs.eu"
+cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-user "rshen@shenrs.eu"
+cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-password "aaa123"
 
 cd /usr/local/lib/php/phabricator && ./bin/storage upgrade 
 
