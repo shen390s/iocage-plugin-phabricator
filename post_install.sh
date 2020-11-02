@@ -36,9 +36,9 @@ sed -i '' 's/.*opcache.revalidate_freq=.*/opcache.revalidate_freq=1/' /usr/local
 # recommended value of 512MB for php memory limit (avoid warning when running occ)
 sed -i '' 's/.*memory_limit.*/memory_limit=512M/' /usr/local/etc/php.ini
 # recommended value of 10 (instead of 5) to avoid timeout
-sed -i '' 's/.*pm.max_children.*/pm.max_children=10/' /usr/local/etc/php-fpm.d/phabricator.conf
+sed -i '' 's/.*pm.max_children.*/pm.max_children=10/' /usr/local/etc/php-fpm.d/www.conf
 # Phabricator wants PATH environment variable set. 
-echo "env[PATH] = $PATH" >> /usr/local/etc/php-fpm.d/phabricator.conf
+echo "env[PATH] = $PATH" >> /usr/local/etc/php-fpm.d/www.conf
 
 # Start the service
 service nginx start 2>/dev/null
@@ -119,7 +119,9 @@ Match User git
  X11Forwarding no
 EOF
 
-service sshd reload
+sysrc -f /etc/rc.conf sshd_enable="YES"
+
+service sshd start
 
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.host "localhost"
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.user "$USER"
