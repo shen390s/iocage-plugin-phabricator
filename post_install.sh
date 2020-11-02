@@ -71,10 +71,6 @@ GRANT ALL PRIVILEGES ON ${DB}.* TO '${USER}'@'localhost';
 FLUSH PRIVILEGES;
 EOF
 
-# Make the default log directory
-mkdir /var/log/zm
-chown www:www /var/log/zm
-
 else
    # Mysql <= 56 does not
 
