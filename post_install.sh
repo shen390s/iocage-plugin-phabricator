@@ -48,7 +48,6 @@ service mysql-server start 2>/dev/null
 #https://docs.phabricator.com/server/13/admin_manual/installation/installation_wizard.html do not use the same name for user and db
 USER="dbadmin"
 DB="phabricator"
-NCUSER="ncadmin"
 
 # Save the config values
 echo "$DB" > /root/dbname
@@ -59,7 +58,8 @@ PASS=`cat /root/dbpassword`
 
 if [ -e "/root/.mysql_secret" ] ; then
    # Mysql > 57 sets a default PW on root
-   TMPPW=$(cat /root/.mysql_secret | grep -v "^#")
+   # TMPPW=$(cat /root/.mysql_secret | grep -v "^#")
+   TMPPW=$(cat /root/.mysql_secret | sed '1d')
    echo "SQL Temp Password: $TMPPW"
 
 # Configure mysql
