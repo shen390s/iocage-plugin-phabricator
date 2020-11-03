@@ -24,8 +24,6 @@ if [ "$CPCONFIG" = "1" ] ; then
   md5 -q /usr/local/etc/nginx/conf.d/phabricator.conf > /usr/local/etc/nginx/conf.d/phabricator.conf.checksum
 fi
 
-cp /usr/local/etc/php.ini-production /usr/local/etc/php.ini
-
 # Start the service
 service nginx start 2>/dev/null
 service php-fpm start 2>/dev/null
@@ -81,7 +79,6 @@ if [ -e "/etc/iocage-env" ] ; then
 fi
 
 cp /usr/local/lib/php/phabricator/resources/sshd/phabricator-sudoers.sample /usr/local/etc/sudoers.d
-cp /usr/local/lib/php/phabricator/conf/local/local.json.sample /usr/local/lib/php/phabricator/conf/local/local.json
 
 cat >>/etc/ssh/sshd_config <<EOF
 Match User git
