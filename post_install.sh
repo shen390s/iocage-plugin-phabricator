@@ -24,6 +24,7 @@ if [ "$CPCONFIG" = "1" ] ; then
   md5 -q /usr/local/etc/nginx/conf.d/phabricator.conf > /usr/local/etc/nginx/conf.d/phabricator.conf.checksum
 fi
 
+DOMAIN_NAME=`cat /var/db/dhclient.leases.* |grep domain-name |grep -v server | tail -n 1|sed -e 's/^[^\"]*\"\([^\"]*\)\".*$/\1/g'`
 # Start the service
 service nginx start 2>/dev/null
 service php-fpm start 2>/dev/null
@@ -107,7 +108,7 @@ chown -Rf www:www /var/phabricator
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.host "localhost"
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.user "$USER"
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.pass "$PASS"
-cd /usr/local/lib/php/phabricator && ./bin/config set phabricator.base-uri "http://`hostname`.shenrs.eu"
+cd /usr/local/lib/php/phabricator && ./bin/config set phabricator.base-uri "http://`hostname`.$DOMAIN_NAME"
 
 cd /usr/local/lib/php/phabricator && ./bin/storage upgrade --force 
 
