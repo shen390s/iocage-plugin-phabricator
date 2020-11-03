@@ -78,7 +78,7 @@ if [ -e "/etc/iocage-env" ] ; then
 	echo "Using NAT Address: $IOCAGE_PLUGIN_IP"
 fi
 
-cp /usr/local/lib/php/phabricator/resources/sshd/phabricator-sudoers.sample /usr/local/etc/sudoers.d
+pw user add git -m
 
 cat >>/etc/ssh/sshd_config <<EOF
 Match User git
