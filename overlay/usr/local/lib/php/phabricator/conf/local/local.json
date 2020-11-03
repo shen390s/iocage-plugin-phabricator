@@ -1,0 +1,14 @@
+{
+  "phabricator.base-uri": "http://phabricator2.shenrs.eu",
+  "mysql.pass": "zjFMhaibeptzM85b",
+  "mysql.user": "dbadmin",
+  "mysql.host": "localhost",
+  "phd.user": "www",
+  "phd.log-directory": "/var/log",
+  "mysql.port": "3306",
+  "repository.default-local-path": "/var/phabricator/repo",
+  "storage.local-disk.path": "/var/phabricator/files",
+  "phabricator.show-prototypes": true,
+  "diffusion.ssh-user": "git",
+  "diffusion.ssh-port": 22
+}

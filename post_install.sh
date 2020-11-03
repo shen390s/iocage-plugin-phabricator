@@ -5,6 +5,7 @@ sysrc -f /etc/rc.conf nginx_enable="YES"
 sysrc -f /etc/rc.conf mysql_enable="YES"
 sysrc -f /etc/rc.conf php_fpm_enable="YES"
 sysrc -f /etc/rc.conf phd_enable="YES"
+sysrc -f /etc/rc.conf sshd_enable="YES"
 
 # Install fresh phabricator.conf if user hasn't upgraded
 CPCONFIG=0
@@ -100,17 +101,16 @@ Match User git
  X11Forwarding no
 EOF
 
-sysrc -f /etc/rc.conf sshd_enable="YES"
-
 service sshd start
+
+mkdir -p /var/phabricator/files
+mkdir -p /var/phabricator/repo
+chown -Rf www:www /var/phabricator
 
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.host "localhost"
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.user "$USER"
 cd /usr/local/lib/php/phabricator && ./bin/config set mysql.pass "$PASS"
-cd /usr/local/lib/php/phabricator && ./bin/config set phabricator.base-uri "http://phabricator.shenrs.eu"
-# cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-host "mail.shenrs.eu"
-# cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-user "rshen@shenrs.eu"
-# cd /usr/local/lib/php/phabricator && ./bin/config set phpmailer.smtp-password "aaa123"
+cd /usr/local/lib/php/phabricator && ./bin/config set phabricator.base-uri "http://`hostname`.shenrs.eu"
 
 cd /usr/local/lib/php/phabricator && ./bin/storage upgrade --force 
 
