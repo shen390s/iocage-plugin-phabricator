@@ -105,12 +105,13 @@ mkdir -p /var/phabricator/files
 mkdir -p /var/phabricator/repo
 chown -Rf www:www /var/phabricator
 
-cd /usr/local/lib/php/phabricator && ./bin/config set mysql.host "localhost"
-cd /usr/local/lib/php/phabricator && ./bin/config set mysql.user "$USER"
-cd /usr/local/lib/php/phabricator && ./bin/config set mysql.pass "$PASS"
-cd /usr/local/lib/php/phabricator && ./bin/config set phabricator.base-uri "http://`hostname`.$DOMAIN_NAME"
-
-cd /usr/local/lib/php/phabricator && ./bin/storage upgrade --force 
+cd /usr/local/lib/php/phabricator && \
+    ./bin/config set mysql.host "localhost" && \
+    ./bin/config set mysql.user "$USER" && \
+    ./bin/config set mysql.pass "$PASS" && \
+    ./bin/config set phabricator.base-uri "http://`hostname`.$DOMAIN_NAME" && \
+    ./bin/config set pygments.enabled true && \
+    ./bin/storage upgrade --force 
 
 #restart the services to make sure we have pick up the new permission
 service php-fpm restart 2>/dev/null
