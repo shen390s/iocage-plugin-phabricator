@@ -105,13 +105,16 @@ mkdir -p /var/phabricator/files
 mkdir -p /var/phabricator/repo
 chown -Rf www:www /var/phabricator
 
-cd /usr/local/lib/php/phabricator && \
-    ./bin/config set mysql.host "localhost" && \
-    ./bin/config set mysql.user "$USER" && \
-    ./bin/config set mysql.pass "$PASS" && \
-    ./bin/config set phabricator.base-uri "http://`hostname`.$DOMAIN_NAME" && \
-    ./bin/config set pygments.enabled true && \
-    ./bin/storage upgrade --force 
+cd /usr/local/lib/php/phabricator 
+./bin/config set mysql.host "localhost" 
+./bin/config set mysql.user "$USER" 
+./bin/config set mysql.pass "$PASS" 
+./bin/config set phabricator.base-uri "http://`hostname`.$DOMAIN_NAME" 
+./bin/config set pygments.enabled true 
+if [ -f /root/mailers.json ]; then
+    ./bin/config set --stdin cluster.mailers < /root/mailers.json
+fi
+./bin/storage upgrade --force 
 
 #restart the services to make sure we have pick up the new permission
 service php-fpm restart 2>/dev/null
